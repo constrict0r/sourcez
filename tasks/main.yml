@@ -1,0 +1,77 @@
+---
+- name: Display Role Details.
+  debug:
+    msg:
+      - '===================================================================='
+      - 'constrict0r.sourcez'
+      - 'Add apt repositories to Debian sources.'
+      - '===================================================================='
+
+- name: Process sources.
+  debug:
+    msg:
+      - '--------------------------------------------------------------------'
+      - 'Processing sources ...'
+      - '--------------------------------------------------------------------'
+  when: unified is not variable_empty
+
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+    state: present
+  register: result
+  retries: 2
+  until: result is success
+  changed_when: false
+  when:
+    - not ansible_check_mode
+    - unified is not variable_empty
+
+- name: Add hexadecimal keys.
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ item.key }}"
+    state: present
+  register: result
+  retries: 2
+  until: result is success
+  changed_when: false
+  when:
+    - not ansible_check_mode
+    - unified is not variable_empty
+    - item.key is defined
+    - item.key is not search('http')
+  with_items: "{{ unified }}"
+
+- name: Add url keys.
+  apt_key:
+    url: "{{ item.key }}"
+    state: present
+  register: result
+  retries: 2
+  until: result is success
+  changed_when: false
+  when:
+    - not ansible_check_mode
+    - unified is not variable_empty
+    - item.key is defined
+    - item.key is search('http')
+  with_items: "{{ unified }}"
+
+- name: Add sources.
+  lineinfile:
+    path: "/etc/apt/sources.list.d/{{ item.name }}.list"
+    line: "{{ item.repo }}"
+    state: present
+    mode: 0440
+    create: true
+  become: true
+  changed_when: false
+  when:
+    - not ansible_check_mode
+    - unified is not variable_empty
+    - item.name is defined
+    - item.repo is defined
+  with_items: "{{ unified }}"

@@ -1,0 +1,7 @@
+---
+# Example configuration file.
+
+repositories:
+ - name: spotify
+   repo: 'deb http://repository.spotify.com stable non-free'
+   key: https://download.spotify.com/debian/pubkey.gpg
