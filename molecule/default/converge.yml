@@ -31,7 +31,7 @@
 
   roles:
     - role: sourcez
-      configuration: https://is.gd/vVdEsO
+      configuration: https://is.gd/lORPOB
 
   post_tasks:
     - name: Run verification tests.
