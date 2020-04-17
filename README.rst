@@ -175,7 +175,7 @@ This variable is empty by default.
              repo: deb http://www.debian-multimedia.org sid main
 
    # To a playbook from terminal.
-   ansible-playbook -i tests/inventory tests/test-playbook.yml -K -e \
+   ansible-playbook -i inventory my-playbook.yml -K -e \
        "{repositories: [{ \
             name: multimedia, \
             repo: 'deb http://www.debian-multimedia.org sid main' \
